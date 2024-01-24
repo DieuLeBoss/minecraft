@@ -1,0 +1,30 @@
+Structure Chunk / Cube :
+
+    mtn faut que je me reéxplique ce que j'ai compris, en gros un chunk sera un octree (un arbre quoi), chaque noeud de cet octree contiendras une liste avec des cubes, le but de l'octree est de divisé le chunk en plusieur zone (espace), la recherche d'un cube commencera de façon grossière (recherche du noeud/zone) du chunk dans lequel il se trouve, puis d'affine en le recherchant dans la liste du noeud.
+
+    ça s'était la version simple.
+
+    ensuite il faudra optimisé, par exemple les cubes d'air je m'en branle, pas besion de les stocker, donc dans certains chunk, il y aura des zone + ou - dense de cube, donc l'ideal serais que chaque liste est une taille maximal de cubes et que le chunk commence avec un seul noeud couvrant tout son espace, puis quand la liste atteint est pleine, on divise le chunk en 2 noeud, puis on reparti les cubes de manière égale (ou presque) et de façon a ce que la recherche de cube en fonction de leur coord soit opti.
+
+    autre petite chose, quand je divise un chunk en 2, je dois trouvé comment couper le chunk (soit dans l'axe x, y ou z) en faisant les 3 tests de div pas 2 dans chaque axe et verifier lequel a la meilleur repartition pour l'apliquer ensuite.
+
+    minecraft_in_rust /   <-- changement, je reste en c++ en fait
+
+        src /
+            load_config.rs
+            config.rs (contient toutes les constantes de config du projet)
+            cube.rs
+            chunk.rs
+            world.rs
+    
+        config /
+            cube.conf
+            chunk.conf
+            world.conf
+
+
+A faire :
+    modules load_config, config
+    modules cube, chunk, world
+
+MAX_SIZE_LIST = 16
