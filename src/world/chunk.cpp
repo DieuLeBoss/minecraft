@@ -233,8 +233,8 @@ bool Chunk::add(Cube cube)
             break;
     }
 
-    if(chunk_xm != nullptr)
-        chunk_xm->test(xp, xmC_neighbor);
+    // if(chunk_xm != nullptr)
+    //     chunk_xm->test(xp, xmC_neighbor); // C DE LA MERDE !!!!!!!!!!!!!!!!!!!!!!
     
     updateBuffer();
 
