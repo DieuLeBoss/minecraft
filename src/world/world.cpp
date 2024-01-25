@@ -115,8 +115,9 @@ void World::addChunk(glm::vec2 pos)
 }
 
 Chunk* World::getChunk(glm::vec2 pos) {
+    Chunk* chunk;
     for(int i = 0; i < chunks.size(); i++) {
-        Chunk* chunk = &chunks.at(i);
+        chunk = &chunks.at(i);
         if(chunk->getPosition() == pos) {
             return chunk;
         }

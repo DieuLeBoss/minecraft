@@ -256,33 +256,59 @@ Cube Chunk::remove(glm::vec3 pos)
     deleteCubeMesh(temp.pos);
 
     Cube* neighbor;
-    glm::vec3 neighborCoord;
-    TextureCoordCube texture;
+
+    TextureCoordCube texture = textCoord->at(neighbor->id);
 
     neighbor = octree.get(glm::vec3(temp.pos.x+1, temp.pos.y, temp.pos.z));
-    addNeighborFace(neighbor, xm);
+    addNeighborFace(neighbor, xm, texture.side);
     neighbor = octree.get(glm::vec3(temp.pos.x-1, temp.pos.y, temp.pos.z));
-    addNeighborFace(neighbor, xp);
+    addNeighborFace(neighbor, xp, texture.side);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y+1, temp.pos.z));
-    addNeighborFace(neighbor, ym);
+    addNeighborFace(neighbor, ym, texture.bottom);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y-1, temp.pos.z));
-    addNeighborFace(neighbor, yp);
+    addNeighborFace(neighbor, yp, texture.top);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y, temp.pos.z+1));
-    addNeighborFace(neighbor, zm);
+    addNeighborFace(neighbor, zm, texture.side);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y, temp.pos.z-1));
-    addNeighborFace(neighbor, zp);
+    addNeighborFace(neighbor, zp, texture.side);
+
+    if(chunk_xp && pos.x == CHUNK_X_SIZE-1) 
+        chunk_xp->addFace(xm, glm::vec3(0, pos.y, pos.z));
+    
+    if(chunk_xm && pos.x == 0)
+        chunk_xm->addFace(xp, glm::vec3(CHUNK_X_SIZE-1, pos.y, pos.z));
+
+    if(chunk_yp && pos.z == CHUNK_Z_SIZE-1)
+        chunk_yp->addFace(zm, glm::vec3(pos.x, pos.y, 0));
+
+    if(chunk_ym && pos.z == 0)
+        chunk_ym->addFace(zp, glm::vec3(pos.x, pos.y, CHUNK_Z_SIZE-1));
 
     updateBuffer();
     
     return temp;
 }
 
-void Chunk::addNeighborFace(Cube* neighbor, Vertex vertex)
+void Chunk::addFace(Vertex v, glm::vec3 pos) {
+    Cube* cube = get(pos);
+    if(cube && !hasFace(xm, pos)) {
+        addVertices(pos, v, textCoord->at(cube->id).side);
+    }
+}
+
+bool Chunk::hasFace(Vertex v, glm::vec3 pos) {
+    for(int i = 0; i < mesh.vertices.size(); i+=20) {
+        if(checkIsFace(i, v, pos))
+            return true;
+    }
+    return false;
+}
+
+void Chunk::addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t)
 {
     if(neighbor != nullptr) {
         glm::vec3 neighborCoord = getWorldCoord(neighbor->pos);
-        TextureCoordCube texture = textCoord->at(neighbor->id);
-        addVertices(neighborCoord, vertex, texture.side);
+        addVertices(neighborCoord, vertex, t);
     }
 }
 

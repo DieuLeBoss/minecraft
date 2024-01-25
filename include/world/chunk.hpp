@@ -84,7 +84,7 @@ class Chunk
         bool border;
 
         void addVertices(glm::vec3 pos, Vertex v, TextureCoordFace t);
-        void addNeighborFace(Cube* neighbor, Vertex vertex);
+        void addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t);
 
         void deleteCubeMesh(glm::vec3 pos);
         int removeCubeMesh(bool xpB, bool xmB, bool ypB, bool ymB, bool zpB, bool zmB, int i, glm::vec3 coord);
@@ -113,8 +113,10 @@ class Chunk
 
         void removeInMesh(int i);
         bool checkIsFace(int i, Vertex v, glm::vec3 pos);
+        bool hasFace(Vertex v, glm::vec3 pos);
 
         void removeFace(Vertex vertex, Cube* cube);
+        void addFace(Vertex v, glm::vec3 pos);
 
         void setChunkXp(Chunk* chunk);
         void setChunkXm(Chunk* chunk);
