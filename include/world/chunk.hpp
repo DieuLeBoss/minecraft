@@ -16,6 +16,13 @@
 
 #include "settings.hpp"
 
+extern Vertex xp;
+extern Vertex xm;
+extern Vertex yp;
+extern Vertex ym;
+extern Vertex zp;
+extern Vertex zm;
+
 struct TextureCoordFace
 {
     TextureCoordFace() {}
@@ -67,13 +74,6 @@ class Chunk
 
         std::vector<TextureCoordCube>* textCoord;
 
-        Vertex xp;
-        Vertex xm;
-        Vertex yp;
-        Vertex ym;
-        Vertex zp;
-        Vertex zm;
-
         Chunk* chunk_xp;
         Chunk* chunk_xm;
         Chunk* chunk_yp;
@@ -114,7 +114,7 @@ class Chunk
         void removeInMesh(int i);
         bool checkIsFace(int i, Vertex v, glm::vec3 pos);
 
-        void test(Vertex vertex, Cube* cube);
+        void removeFace(Vertex vertex, Cube* cube);
 
         void setChunkXp(Chunk* chunk);
         void setChunkXm(Chunk* chunk);
@@ -124,6 +124,10 @@ class Chunk
         void setBorder();
         void unsetBorder();
         bool isBorder();
+
+        void printMeshPart(int i);
+        void printMesh();
+        void printIndices();
 };
 
 #endif
