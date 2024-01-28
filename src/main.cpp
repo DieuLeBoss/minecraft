@@ -147,15 +147,8 @@ int minecraft()
 
 int main()
 {
+    // nullptr = false
+    // /usr/include/GL/glew.h
+
     minecraft();
-
-    int* a = nullptr;
-
-    if(a) {
-        std::cout << "nullptr = true" << std::endl;
-    } else {
-        std::cout << "nullptr = false" << std::endl;
-    }
-
-    // verifer dernier implementation dans world, puis dans chunk dans add, probleme core dump a intersect quand get dans chunk voisin
 }

@@ -136,52 +136,52 @@ bool Chunk::add(Cube cube)
 
     Cube* xpC = octree.get(glm::vec3(cube.pos.x + 1, cube.pos.y, cube.pos.z));
     Cube* xpC_neighbor = nullptr;
-    if(cube.pos.x+1 == CHUNK_X_SIZE && chunk_xp != nullptr) {
+    if(cube.pos.x+1 == CHUNK_X_SIZE && chunk_xp) {
         xpC_neighbor = chunk_xp->get(glm::vec3(0, cube.pos.y, cube.pos.z));
     }
-    if(xpC == nullptr && xpC_neighbor == nullptr) {
+    if(!xpC && !xpC_neighbor) {
         addVertices(cubeCoord, xp, temp.side);
     }
 
 
     Cube* xmC = octree.get(glm::vec3(cube.pos.x - 1, cube.pos.y, cube.pos.z));
     Cube* xmC_neighbor = nullptr;
-    if(cube.pos.x == 0 && chunk_xm != nullptr) {
+    if(cube.pos.x == 0 && chunk_xm) {
         xmC_neighbor = chunk_xm->get(glm::vec3(CHUNK_X_SIZE-1, cube.pos.y, cube.pos.z));
     }
-    if(xmC == nullptr && xmC_neighbor == nullptr) {
+    if(!xmC && !xmC_neighbor) {
         addVertices(cubeCoord, xm, temp.side);
     }
 
 
     Cube* ypC = octree.get(glm::vec3(cube.pos.x, cube.pos.y + 1, cube.pos.z));
-    if(ypC == nullptr) {
+    if(!ypC) {
         addVertices(cubeCoord, yp, temp.top);
     }
 
 
     Cube* ymC = octree.get(glm::vec3(cube.pos.x, cube.pos.y - 1, cube.pos.z));
-    if(ymC == nullptr) {
+    if(!ymC) {
         addVertices(cubeCoord, ym, temp.bottom);
     }
 
 
     Cube* zpC = octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z + 1));
     Cube* zpC_neighbor = nullptr;
-    if(cube.pos.z+1 == CHUNK_Z_SIZE && chunk_yp != nullptr) {
+    if(cube.pos.z+1 == CHUNK_Z_SIZE && chunk_yp) {
         zpC_neighbor = chunk_yp->get(glm::vec3(cube.pos.x, cube.pos.y, 0));
     }
-    if(zpC == nullptr && zpC_neighbor == nullptr) {
+    if(!zpC && !zpC_neighbor) {
         addVertices(cubeCoord, zp, temp.side);
     }
 
     
     Cube* zmC = octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z - 1));
     Cube* zmC_neighbor = nullptr;
-    if(cube.pos.z == 0 && chunk_ym != nullptr) {
+    if(cube.pos.z == 0 && chunk_ym) {
         zmC_neighbor = chunk_ym->get(glm::vec3(cube.pos.x, cube.pos.y, CHUNK_Z_SIZE-1));
     }
-    if(zmC == nullptr && zmC_neighbor == nullptr) {
+    if(!zmC && !zmC_neighbor) {
         addVertices(cubeCoord, zm, temp.side);
     }
 
@@ -217,16 +217,16 @@ bool Chunk::add(Cube cube)
             break;
     }
 
-    if(chunk_xm != nullptr && xmC_neighbor != nullptr) {
+    if(chunk_xm && xmC_neighbor) {
         chunk_xm->removeFace(xp, xmC_neighbor);
     }
-    if(chunk_xp != nullptr && xpC_neighbor != nullptr) {
+    if(chunk_xp && xpC_neighbor) {
         chunk_xp->removeFace(xm, xpC_neighbor);
     }
-    if(chunk_ym != nullptr && zmC_neighbor != nullptr) {
+    if(chunk_ym && zmC_neighbor) {
         chunk_ym->removeFace(zp, zmC_neighbor);
     }
-    if(chunk_yp != nullptr && zpC_neighbor != nullptr) {
+    if(chunk_yp && zpC_neighbor) {
         chunk_yp->removeFace(zm, zpC_neighbor);
     }
     
@@ -306,7 +306,7 @@ bool Chunk::hasFace(Vertex v, glm::vec3 pos) {
 
 void Chunk::addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t)
 {
-    if(neighbor != nullptr) {
+    if(neighbor) {
         glm::vec3 neighborCoord = getWorldCoord(neighbor->pos);
         addVertices(neighborCoord, vertex, t);
     }
@@ -352,7 +352,7 @@ void Chunk::updateMesh()
 
 void Chunk::updateMesh(Node* node)
 {
-    if(node->childs[0] != nullptr) {
+    if(node->childs[0]) {
         for(int i = 0; i < 8; i++) {
             updateMesh(node->childs[i]);
         }
@@ -368,22 +368,22 @@ void Chunk::updateMesh(Node* node)
 
         TextureCoordCube temp = textCoord->at(cube.id);
 
-        if(octree.get(glm::vec3(cube.pos.x + 1, cube.pos.y, cube.pos.z)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x + 1, cube.pos.y, cube.pos.z))) 
             addVertices(cubeCoord, xp, temp.side);
         
-        if(octree.get(glm::vec3(cube.pos.x - 1, cube.pos.y, cube.pos.z)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x - 1, cube.pos.y, cube.pos.z))) 
             addVertices(cubeCoord, xm, temp.side);
         
-        if(octree.get(glm::vec3(cube.pos.x, cube.pos.y + 1, cube.pos.z)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x, cube.pos.y + 1, cube.pos.z))) 
             addVertices(cubeCoord, yp, temp.top);
         
-        if(octree.get(glm::vec3(cube.pos.x, cube.pos.y - 1, cube.pos.z)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x, cube.pos.y - 1, cube.pos.z))) 
             addVertices(cubeCoord, ym, temp.bottom);
         
-        if(octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z + 1)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z + 1))) 
             addVertices(cubeCoord, zp, temp.side);
         
-        if(octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z - 1)) == nullptr) 
+        if(!octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z - 1))) 
             addVertices(cubeCoord, zm, temp.side);
     }
 }

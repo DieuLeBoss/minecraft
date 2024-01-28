@@ -87,7 +87,7 @@ void World::addChunk(glm::vec2 pos)
         }
     }
 
-    if(getChunk(glm::vec2(pos.x+1, pos.y)) != nullptr && getChunk(glm::vec2(pos.x-1, pos.y)) != nullptr && getChunk(glm::vec2(pos.x, pos.y+1)) != nullptr && getChunk(glm::vec2(pos.x, pos.y-1)) != nullptr) {
+    if(getChunk(glm::vec2(pos.x+1, pos.y)) && getChunk(glm::vec2(pos.x-1, pos.y)) && getChunk(glm::vec2(pos.x, pos.y+1)) && getChunk(glm::vec2(pos.x, pos.y-1))) {
         temp.unsetBorder();
     } else {
         temp.setBorder();
@@ -100,16 +100,16 @@ void World::addChunk(glm::vec2 pos)
 
     // a verifier si != nullptr connard de merde !!!!!!!
 
-    if(chunk_xp != nullptr) {
+    if(chunk_xp) {
         chunk_xp->setChunkXm(chunk);
     }
-    if(chunk_xm != nullptr) {
+    if(chunk_xm) {
         chunk_xm->setChunkXp(chunk);
     }
-    if(chunk_yp != nullptr) {
+    if(chunk_yp) {
         chunk_yp->setChunkYm(chunk);
     }
-    if(chunk_ym != nullptr) {
+    if(chunk_ym) {
         chunk_ym->setChunkYp(chunk);
     }
 }
@@ -148,19 +148,19 @@ void World::test(glm::vec3 pos) {
             chunks.erase(chunks.begin()+i);
         } else if(chunk->isBorder()) {
             chunkSidePos = glm::vec3(chunkPos.x+1, pos.y, chunkPos.z);
-            if(getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) == nullptr && calculateDist(pos, chunkSidePos) < renderDistance*16) {
+            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
                 addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
             }
             chunkSidePos = glm::vec3(chunkPos.x-1, pos.y, chunkPos.z);
-            if(getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) == nullptr && calculateDist(pos, chunkSidePos) < renderDistance*16) {
+            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
                 addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
             }
             chunkSidePos = glm::vec3(chunkPos.x, pos.y, chunkPos.z+1);
-            if(getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) == nullptr && calculateDist(pos, chunkSidePos) < renderDistance*16) {
+            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
                 addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
             }
             chunkSidePos = glm::vec3(chunkPos.x, pos.y, chunkPos.z-1);
-            if(getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) == nullptr && calculateDist(pos, chunkSidePos) < renderDistance*16) {
+            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
                 addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
             }
         }
