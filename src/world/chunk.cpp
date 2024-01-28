@@ -7,6 +7,7 @@ Vertex ym = Vertex(0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,1.0f,0.0f,1.0f,0.0f,0.0f,1.0f);
 Vertex zp = Vertex(1.0f,0.0f,1.0f,1.0f,1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,1.0f);
 Vertex zm = Vertex(0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,0.0f,1.0f,0.0f,0.0f);
 
+
 Chunk::Chunk(glm::vec2 ppos, std::vector<TextureCoordCube>* pTextCoord, Chunk* chunk_xp, Chunk* chunk_xm, Chunk* chunk_yp, Chunk* chunk_ym)
 {
     pos = ppos;
@@ -31,12 +32,14 @@ Chunk::Chunk(glm::vec2 ppos, std::vector<TextureCoordCube>* pTextCoord, Chunk* c
 
 }
 
+
 glm::vec3 Chunk::getWorldCoord(glm::vec3 pos)
 {
-    return glm::vec3(this->pos.x*CHUNK_X_SIZE+pos.x,
+    return glm::vec3(this->pos.x*CHUNK_WIDTH+pos.x,
                      pos.y,
-                     this->pos.y*CHUNK_Z_SIZE+pos.z);
+                     this->pos.y*CHUNK_WIDTH+pos.z);
 }
+
 
 int Chunk::removeCubeMesh(bool xpB, bool xmB, bool ypB, bool ymB, bool zpB, bool zmB, int i, glm::vec3 coord)
 {
@@ -76,6 +79,7 @@ int Chunk::removeCubeMesh(bool xpB, bool xmB, bool ypB, bool ymB, bool zpB, bool
     return count;
 }
 
+
 void Chunk::deleteCubeMesh(glm::vec3 pos)
 {
     int count = 0;
@@ -97,6 +101,7 @@ void Chunk::deleteCubeMesh(glm::vec3 pos)
     }
 }
 
+
 void Chunk::removeInMesh(int i)
 {    
     int j = (i / 20) * 6;
@@ -108,12 +113,14 @@ void Chunk::removeInMesh(int i)
         updateIndices(j);
 }
 
+
 void Chunk::updateIndices(int i)
 {
     for(int k = i; k < mesh.indices.size(); k++) {
         mesh.indices.at(k) = mesh.indices.at(k)-4;
     }
 }
+
 
 bool Chunk::checkIsFace(int i, Vertex v, glm::vec3 pos)
 {
@@ -124,6 +131,7 @@ bool Chunk::checkIsFace(int i, Vertex v, glm::vec3 pos)
            (pos.x + v.v[2][0] == mesh.vertices.at(i+10)) && (pos.y + v.v[2][1] == mesh.vertices.at(i+11)) && (pos.z + v.v[2][2] == mesh.vertices.at(i+12)) &&
            (pos.x + v.v[3][0] == mesh.vertices.at(i+15)) && (pos.y + v.v[3][1] == mesh.vertices.at(i+16)) && (pos.z + v.v[3][2] == mesh.vertices.at(i+17));
 }
+
 
 bool Chunk::add(Cube cube)
 {
@@ -136,7 +144,7 @@ bool Chunk::add(Cube cube)
 
     Cube* xpC = octree.get(glm::vec3(cube.pos.x + 1, cube.pos.y, cube.pos.z));
     Cube* xpC_neighbor = nullptr;
-    if(cube.pos.x+1 == CHUNK_X_SIZE && chunk_xp) {
+    if(cube.pos.x+1 == CHUNK_WIDTH && chunk_xp) {
         xpC_neighbor = chunk_xp->get(glm::vec3(0, cube.pos.y, cube.pos.z));
     }
     if(!xpC && !xpC_neighbor) {
@@ -147,7 +155,7 @@ bool Chunk::add(Cube cube)
     Cube* xmC = octree.get(glm::vec3(cube.pos.x - 1, cube.pos.y, cube.pos.z));
     Cube* xmC_neighbor = nullptr;
     if(cube.pos.x == 0 && chunk_xm) {
-        xmC_neighbor = chunk_xm->get(glm::vec3(CHUNK_X_SIZE-1, cube.pos.y, cube.pos.z));
+        xmC_neighbor = chunk_xm->get(glm::vec3(CHUNK_WIDTH-1, cube.pos.y, cube.pos.z));
     }
     if(!xmC && !xmC_neighbor) {
         addVertices(cubeCoord, xm, temp.side);
@@ -168,7 +176,7 @@ bool Chunk::add(Cube cube)
 
     Cube* zpC = octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z + 1));
     Cube* zpC_neighbor = nullptr;
-    if(cube.pos.z+1 == CHUNK_Z_SIZE && chunk_yp) {
+    if(cube.pos.z+1 == CHUNK_WIDTH && chunk_yp) {
         zpC_neighbor = chunk_yp->get(glm::vec3(cube.pos.x, cube.pos.y, 0));
     }
     if(!zpC && !zpC_neighbor) {
@@ -179,7 +187,7 @@ bool Chunk::add(Cube cube)
     Cube* zmC = octree.get(glm::vec3(cube.pos.x, cube.pos.y, cube.pos.z - 1));
     Cube* zmC_neighbor = nullptr;
     if(cube.pos.z == 0 && chunk_ym) {
-        zmC_neighbor = chunk_ym->get(glm::vec3(cube.pos.x, cube.pos.y, CHUNK_Z_SIZE-1));
+        zmC_neighbor = chunk_ym->get(glm::vec3(cube.pos.x, cube.pos.y, CHUNK_WIDTH-1));
     }
     if(!zmC && !zmC_neighbor) {
         addVertices(cubeCoord, zm, temp.side);
@@ -235,6 +243,7 @@ bool Chunk::add(Cube cube)
     return true;
 }
 
+
 void Chunk::removeFace(Vertex vertex, Cube* cube) {
     for(int i = 0; i < mesh.vertices.size(); i+=20) {
         if(checkIsFace(i, vertex, getWorldCoord(cube->pos))) {
@@ -245,6 +254,7 @@ void Chunk::removeFace(Vertex vertex, Cube* cube) {
     }
 
 }
+
 
 Cube Chunk::remove(glm::vec3 pos)
 {
@@ -257,44 +267,65 @@ Cube Chunk::remove(glm::vec3 pos)
 
     Cube* neighbor;
 
-    TextureCoordCube texture = textCoord->at(neighbor->id);
-
     neighbor = octree.get(glm::vec3(temp.pos.x+1, temp.pos.y, temp.pos.z));
-    addNeighborFace(neighbor, xm, texture.side);
+    if(neighbor)
+        addNeighborFace(neighbor, xm, textCoord->at(neighbor->id).side);
     neighbor = octree.get(glm::vec3(temp.pos.x-1, temp.pos.y, temp.pos.z));
-    addNeighborFace(neighbor, xp, texture.side);
+    if(neighbor)
+        addNeighborFace(neighbor, xp, textCoord->at(neighbor->id).side);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y+1, temp.pos.z));
-    addNeighborFace(neighbor, ym, texture.bottom);
+    if(neighbor)
+        addNeighborFace(neighbor, ym, textCoord->at(neighbor->id).bottom);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y-1, temp.pos.z));
-    addNeighborFace(neighbor, yp, texture.top);
+    if(neighbor)
+        addNeighborFace(neighbor, yp, textCoord->at(neighbor->id).top);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y, temp.pos.z+1));
-    addNeighborFace(neighbor, zm, texture.side);
+    if(neighbor)
+        addNeighborFace(neighbor, zm, textCoord->at(neighbor->id).side);
     neighbor = octree.get(glm::vec3(temp.pos.x, temp.pos.y, temp.pos.z-1));
-    addNeighborFace(neighbor, zp, texture.side);
-
-    if(chunk_xp && pos.x == CHUNK_X_SIZE-1) 
-        chunk_xp->addFace(xm, glm::vec3(0, pos.y, pos.z));
+    if(neighbor)
+        addNeighborFace(neighbor, zp, textCoord->at(neighbor->id).side);
     
-    if(chunk_xm && pos.x == 0)
-        chunk_xm->addFace(xp, glm::vec3(CHUNK_X_SIZE-1, pos.y, pos.z));
+    
+    if(chunk_xp && pos.x == CHUNK_WIDTH-1) {
+        chunk_xp->addFace(xm, glm::vec3(0, pos.y, pos.z));
+        chunk_xp->updateBuffer();
+    }
+    
+    if(chunk_xm && pos.x == 0) {
+        chunk_xm->addFace(xp, glm::vec3(CHUNK_WIDTH-1, pos.y, pos.z));
+        chunk_xm->updateBuffer();
+    }
 
-    if(chunk_yp && pos.z == CHUNK_Z_SIZE-1)
+    if(chunk_yp && pos.z == CHUNK_WIDTH-1) {
         chunk_yp->addFace(zm, glm::vec3(pos.x, pos.y, 0));
+        chunk_yp->updateBuffer();
+    }
 
-    if(chunk_ym && pos.z == 0)
-        chunk_ym->addFace(zp, glm::vec3(pos.x, pos.y, CHUNK_Z_SIZE-1));
+    if(chunk_ym && pos.z == 0) {
+        chunk_ym->addFace(zp, glm::vec3(pos.x, pos.y, CHUNK_WIDTH-1));
+        chunk_ym->updateBuffer();
+    }
 
     updateBuffer();
     
     return temp;
 }
 
+
 void Chunk::addFace(Vertex v, glm::vec3 pos) {
     Cube* cube = get(pos);
-    if(cube && !hasFace(xm, pos)) {
-        addVertices(pos, v, textCoord->at(cube->id).side);
+
+    if(!cube) {
+        return;
+    }
+
+    glm::vec3 world_pos = getWorldCoord(pos);
+    if(!hasFace(v, world_pos)) {
+        addVertices(world_pos, v, textCoord->at(cube->id).side);
     }
 }
+
 
 bool Chunk::hasFace(Vertex v, glm::vec3 pos) {
     for(int i = 0; i < mesh.vertices.size(); i+=20) {
@@ -304,6 +335,7 @@ bool Chunk::hasFace(Vertex v, glm::vec3 pos) {
     return false;
 }
 
+
 void Chunk::addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t)
 {
     if(neighbor) {
@@ -311,6 +343,7 @@ void Chunk::addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t)
         addVertices(neighborCoord, vertex, t);
     }
 }
+
 
 void Chunk::addVertices(glm::vec3 pos, Vertex v, TextureCoordFace t)
 {
@@ -331,15 +364,45 @@ void Chunk::addVertices(glm::vec3 pos, Vertex v, TextureCoordFace t)
     mesh.indices.push_back(size+3);
 }
 
+
 Cube* Chunk::get(glm::vec3 pos)
 {
     return octree.get(pos);
 }
 
+
 bool Chunk::addOctree(Cube cube)
 {
     return octree.add(cube);
 }
+
+
+void Chunk::unload() {
+    if(chunk_xp)
+        chunk_xp->unsetChunkXm();
+
+    if(chunk_xm)
+        chunk_xm->unsetChunkXp();
+
+    if(chunk_yp) 
+        chunk_yp->unsetChunkYm();
+
+    if(chunk_ym)
+        chunk_ym->unsetChunkYp();
+}
+
+
+void Chunk::addVerticesFace(Vertex v, int x_min, int y_min, int z_min, int x_max, int y_max, int z_max) {
+    for(int x = x_min; x < x_max; x++) {
+        for(int y = y_min; y < y_max; y++) {
+            for(int z = z_min; z < z_max; z++) {
+                addFace(v, glm::vec3(x, y, z));
+            }
+        }
+    }
+    updateBuffer();
+}
+
 
 void Chunk::updateMesh()
 {
@@ -349,6 +412,7 @@ void Chunk::updateMesh()
 
     updateBuffer();
 }
+
 
 void Chunk::updateMesh(Node* node)
 {
@@ -388,6 +452,7 @@ void Chunk::updateMesh(Node* node)
     }
 }
 
+
 void Chunk::updateBuffer()
 {
     vao.Bind();
@@ -400,6 +465,7 @@ void Chunk::updateBuffer()
     ebo.Unbind();
 }
 
+
 void Chunk::draw()
 {
     vao.Bind();
@@ -409,28 +475,64 @@ void Chunk::draw()
     vao.Unbind();
 }
 
+
 Mesh* Chunk::getMesh()
 {
     return &mesh;
 }
+
 
 glm::vec2 Chunk::getPosition()
 {
     return pos;
 }
 
+
 void Chunk::setChunkXp(Chunk* chunk) {
-    chunk_xp = chunk;
+    this->chunk_xp = chunk;
 }
 void Chunk::setChunkXm(Chunk* chunk) {
-    chunk_xm = chunk;
+    this->chunk_xm = chunk;
 }
 void Chunk::setChunkYp(Chunk* chunk) {
-    chunk_yp = chunk;
+    this->chunk_yp = chunk;
 }
 void Chunk::setChunkYm(Chunk* chunk) {
-    chunk_ym = chunk;
+    this->chunk_ym = chunk;
 }
+
+
+void Chunk::unsetChunkXp() {
+    addVerticesFace(xp, CHUNK_WIDTH-1, 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH);
+    chunk_xp = nullptr;   
+}
+void Chunk::unsetChunkXm() {
+    addVerticesFace(xm, 0, 0, 0, 1, CHUNK_HEIGHT, CHUNK_WIDTH);
+    chunk_xm = nullptr;   
+}
+void Chunk::unsetChunkYp() {
+    addVerticesFace(zp, 0, 0, CHUNK_WIDTH-1, CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH);
+    chunk_yp = nullptr;   
+}
+void Chunk::unsetChunkYm() {
+    addVerticesFace(zm, 0, 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT, 1);
+    chunk_ym = nullptr;   
+}
+
+
+Chunk* Chunk::getChunkXp() {
+    return chunk_xp;
+}
+Chunk* Chunk::getChunkXm() {
+    return chunk_xm;
+}
+Chunk* Chunk::getChunkYp() {
+    return chunk_yp;
+}
+Chunk* Chunk::getChunkYm() {
+    return chunk_ym;
+}
+
 
 void Chunk::setBorder() {
     border = true;
@@ -444,12 +546,13 @@ bool Chunk::isBorder() {
     return border;
 }
 
-
-
-
-
-
-
+void Chunk::testBorder() {
+    if(chunk_xm && chunk_xp && chunk_ym && chunk_yp) {
+        unsetBorder();
+        return;
+    }
+    setBorder();
+}
 
 
 void Chunk::printMeshPart(int i) {

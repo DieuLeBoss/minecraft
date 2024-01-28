@@ -21,5 +21,53 @@
         "top": [1, 15],
         "side": [1, 15],
         "bottom": [1, 15]
+    },
+
+    {
+        "name": "oak_planks",
+        "id": 3,
+        "top": [4, 15],
+        "side": [4, 15],
+        "bottom": [4, 15]
+    },
+
+    {
+        "name": "stone_slab",
+        "id": 4,
+        "top": [6, 15],
+        "side": [5, 15],
+        "bottom": [6, 15]
+    },
+
+    {
+        "name": "brick",
+        "id": 5,
+        "top": [7, 15],
+        "side": [7, 15],
+        "bottom": [7, 15]
+    },
+
+    {
+        "name": "tnt",
+        "id": 6,
+        "top": [9, 15],
+        "side": [8, 15],
+        "bottom": [10, 15]
+    },
+
+    {
+        "name": "cobble",
+        "id": 7,
+        "top": [0, 14],
+        "side": [0, 14],
+        "bottom": [0, 14]
+    },
+
+    {
+        "name": "bedrock",
+        "id": 8,
+        "top": [1, 14],
+        "side": [1, 14],
+        "bottom": [1, 14]
     }
 ]

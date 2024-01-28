@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <thread>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -90,11 +91,13 @@ int minecraft()
 
     World world = World();
 
-    for(int x = 0; x < 2; x++) {
-        for(int z = 0; z < 2; z++) {
+    for(int x = 0; x < 3; x++) {
+        for(int z = 0; z < 3; z++) {
             world.addChunk(glm::vec2(x, z));
         }
     }
+
+    world.getChunk(glm::vec2(0, 0))->remove(glm::vec3(5, 5, 5));
 
     Texture tex("res/textures/terrain.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     tex.textUnit(shader, "tex0", 0);
@@ -106,7 +109,7 @@ int minecraft()
 
     Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f), window);
 
-    
+
     while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
     {
         // Specify the color of the background
@@ -123,7 +126,7 @@ int minecraft()
 
         tex.Bind();
         
-        //world.test(camera.getPosition());
+        world.test(camera.getPosition());
 
         world.draw();
 

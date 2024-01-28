@@ -6,9 +6,8 @@
 
 #include "nlohmann/json.hpp"
 
-extern int CHUNK_X_SIZE;
-extern int CHUNK_Y_SIZE;
-extern int CHUNK_Z_SIZE;
+extern int CHUNK_WIDTH;
+extern int CHUNK_HEIGHT;
 
 bool loadChunkSettings(const std::string& path);
 

@@ -4,14 +4,10 @@ using namespace nlohmann;
 
 #include <iostream>
 
-int CHUNK_X_SIZE = 0;
-int CHUNK_Y_SIZE = 0;
-int CHUNK_Z_SIZE = 0;
+int CHUNK_WIDTH = 0;
+int CHUNK_HEIGHT = 0;
 
 int RENDER_DISTANCE = 0;
-
-
-
 
 
 bool loadChunkSettings(const std::string& path) {
@@ -27,9 +23,8 @@ bool loadChunkSettings(const std::string& path) {
 
     auto dim = data["dimension"];
 
-    CHUNK_X_SIZE = dim["X"];
-    CHUNK_Y_SIZE = dim["Y"];
-    CHUNK_Z_SIZE = dim["Z"];
+    CHUNK_WIDTH = dim["width"];
+    CHUNK_HEIGHT = dim["height"];
 
     return true;
 }

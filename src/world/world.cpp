@@ -4,7 +4,7 @@ using namespace nlohmann;
 
 World::World()
 {
-    chunks = std::vector<Chunk>();
+    chunks = std::vector<Chunk*>();
     textureCoord = std::vector<TextureCoordCube>();
     renderDistance = 10;
 
@@ -77,47 +77,65 @@ void World::addChunk(glm::vec2 pos)
     Chunk* chunk_yp = getChunk(glm::vec2(pos.x, pos.y+1));
     Chunk* chunk_ym = getChunk(glm::vec2(pos.x, pos.y-1));
 
-    Chunk temp(pos, &textureCoord, chunk_xp, chunk_xm, chunk_yp, chunk_ym);
-
-    for(int x = 0; x < 16; x++) {
-        for(int z = 0; z < 16; z++) {
-            for(int y = 0; y < 10; y++) {
-                temp.add(Cube(glm::vec3(x, y, z), 2));
-            }
-        }
-    }
-
-    if(getChunk(glm::vec2(pos.x+1, pos.y)) && getChunk(glm::vec2(pos.x-1, pos.y)) && getChunk(glm::vec2(pos.x, pos.y+1)) && getChunk(glm::vec2(pos.x, pos.y-1))) {
-        temp.unsetBorder();
-    } else {
-        temp.setBorder();
-    }
+    Chunk* temp = new Chunk(pos, &textureCoord, chunk_xp, chunk_xm, chunk_yp, chunk_ym);
 
     chunks.push_back(temp);
 
-    Chunk* chunk = &chunks.at(chunks.size()-1);
-    
+    for(int x = 0; x < 16; x++) {
+        for(int z = 0; z < 16; z++) {
+            temp->add(Cube(glm::vec3(x, 0, z), 8));
+            for(int y = 1; y < 4; y++) {
+                temp->add(Cube(glm::vec3(x, y, z), 1));
+            }
+            temp->add(Cube(glm::vec3(x, 4, z), 0));
+        }
+    }
+
+    temp->testBorder();  
 
     // a verifier si != nullptr connard de merde !!!!!!!
 
     if(chunk_xp) {
-        chunk_xp->setChunkXm(chunk);
+        chunk_xp->setChunkXm(temp);
+        chunk_xp->testBorder();
     }
+    
     if(chunk_xm) {
-        chunk_xm->setChunkXp(chunk);
+        chunk_xm->setChunkXp(temp);
+        chunk_xm->testBorder();
     }
+    
     if(chunk_yp) {
-        chunk_yp->setChunkYm(chunk);
+        chunk_yp->setChunkYm(temp);
+        chunk_yp->testBorder();
     }
+
     if(chunk_ym) {
-        chunk_ym->setChunkYp(chunk);
+        chunk_ym->setChunkYp(temp);
+        chunk_ym->testBorder();
     }
+}
+
+void World::removeChunk(glm::vec2 pos) {
+    Chunk* chunk;
+    for(int i = 0; i < chunks.size(); i++) {
+        chunk = chunks.at(i);
+        if(chunk->getPosition() == pos) {
+            chunk->unload();
+            chunks.erase(chunks.begin()+i);
+        }
+    }
+}
+
+void World::removeChunk(int index) {
+    chunks.at(index)->unload();
+    chunks.erase(chunks.begin()+index);   
 }
 
 Chunk* World::getChunk(glm::vec2 pos) {
     Chunk* chunk;
     for(int i = 0; i < chunks.size(); i++) {
-        chunk = &chunks.at(i);
+        chunk = chunks.at(i);
         if(chunk->getPosition() == pos) {
             return chunk;
         }
@@ -125,45 +143,49 @@ Chunk* World::getChunk(glm::vec2 pos) {
     return nullptr;
 }
 
+glm::vec2 World::getGlobalPos(glm::vec2 local_pos) {
+    return glm::vec2(local_pos.x*CHUNK_WIDTH, local_pos.y*CHUNK_WIDTH);
+}
+
+glm::vec3 World::getGlobalPosFromCamera(glm::vec2 local_pos, int pos_y_camera) {
+    return glm::vec3(local_pos.x*CHUNK_WIDTH+CHUNK_WIDTH/2, pos_y_camera, local_pos.y*CHUNK_WIDTH+CHUNK_WIDTH/2);
+}
+
+
 void World::draw()
 {
-    for(Chunk c: chunks) {
-        c.draw();
+    for(Chunk* c: chunks) {
+        c->draw();
     }
 }
 
 void World::test(glm::vec3 pos) {
     Chunk* chunk;
-    glm::vec2 temp;
-    glm::vec3 chunkPos;
-    glm::vec3 chunkSidePos;
-    float dist;
-    for(int i = 0; i < chunks.size(); i++) {
-        chunk = &chunks.at(i);
-        temp = chunk->getPosition();
-        chunkPos = glm::vec3(temp.x*CHUNK_X_SIZE+CHUNK_X_SIZE/2, pos.y, temp.y*CHUNK_Z_SIZE+CHUNK_Z_SIZE/2);
-        dist = calculateDist(pos, chunkPos);
+    glm::vec2 local_pos;
+    glm::vec3 global_pos;
 
-        if(dist > renderDistance*16) {
-            chunks.erase(chunks.begin()+i);
+    for(int i = 0; i < chunks.size(); i++) {
+        chunk = chunks.at(i);
+        local_pos = chunk->getPosition();
+        global_pos = getGlobalPosFromCamera(local_pos, pos.y);
+
+        if(calculateDist(pos, global_pos) > renderDistance*CHUNK_WIDTH) {
+            removeChunk(i);
         } else if(chunk->isBorder()) {
-            chunkSidePos = glm::vec3(chunkPos.x+1, pos.y, chunkPos.z);
-            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
-                addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
-            }
-            chunkSidePos = glm::vec3(chunkPos.x-1, pos.y, chunkPos.z);
-            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
-                addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
-            }
-            chunkSidePos = glm::vec3(chunkPos.x, pos.y, chunkPos.z+1);
-            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
-                addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
-            }
-            chunkSidePos = glm::vec3(chunkPos.x, pos.y, chunkPos.z-1);
-            if(!getChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z)) && calculateDist(pos, chunkSidePos) < renderDistance*16) {
-                addChunk(glm::vec2(chunkSidePos.x, chunkSidePos.z));
-            }
+            if(!chunk->getChunkXp() && calculateDist(glm::vec3(global_pos.x+CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < renderDistance*(CHUNK_WIDTH-1))
+                addChunk(glm::vec2(local_pos.x+1, local_pos.y));
+
+            if(!chunk->getChunkXm() && calculateDist(glm::vec3(global_pos.x-CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < renderDistance*(CHUNK_WIDTH-1))
+                addChunk(glm::vec2(local_pos.x-1, local_pos.y));
+
+            if(!chunk->getChunkYp() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z+CHUNK_WIDTH), pos) < renderDistance*(CHUNK_WIDTH-1))
+                addChunk(glm::vec2(local_pos.x, local_pos.y+1));
+
+            if(!chunk->getChunkYm() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z-CHUNK_WIDTH), pos) < renderDistance*(CHUNK_WIDTH-1))
+                addChunk(glm::vec2(local_pos.x, local_pos.y-1));
         }
+
+        chunk->testBorder();        
     }
 }
 

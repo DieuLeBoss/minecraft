@@ -122,10 +122,24 @@ class Chunk
         void setChunkXm(Chunk* chunk);
         void setChunkYp(Chunk* chunk);
         void setChunkYm(Chunk* chunk);
+
+        void unsetChunkXp();
+        void unsetChunkXm();
+        void unsetChunkYp();
+        void unsetChunkYm();
+
+        Chunk* getChunkXp();
+        Chunk* getChunkXm();
+        Chunk* getChunkYp();
+        Chunk* getChunkYm();
         
         void setBorder();
         void unsetBorder();
         bool isBorder();
+        void testBorder();
+
+        void addVerticesFace(Vertex v, int x_min, int y_min, int z_min, int x_max, int y_max, int z_max);
+        void unload();
 
         void printMeshPart(int i);
         void printMesh();
