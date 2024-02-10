@@ -24,7 +24,5 @@ Structure Chunk / Cube :
 
 
 A faire :
-    modules load_config, config
-    modules cube, chunk, world
-
-MAX_SIZE_LIST = 16
+    - guettes removeFace il est appelé dans updateMesh mais il appel updateBuffer
+    - mets tout en multithread connard

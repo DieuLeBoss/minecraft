@@ -1,34 +1,31 @@
-#ifndef WORLD_HPP
-#define WORLD_HPP
+#ifndef CHUNK_MANAGER_HPP
+#define CHUNK_MANAGER_HPP
 
 #include <vector>
-#include <fstream>
 #include <glm/glm.hpp>
 
-#include "nlohmann/json.hpp"
 #include "world/structure/chunk.hpp"
 
-#include "settings.hpp"
-
-class World
+class ChunkManager
 {
     private:
-        std::vector<Chunk*> chunks;
+        std::vector<Chunk> chunks;
 
         float calculateDist(glm::vec3 pos1, glm::vec3 pos2);
 
         glm::vec2 getGlobalPos(glm::vec2 local_pos);
         glm::vec3 getGlobalPosFromCamera(glm::vec2 local_pos, int pos_y_camera);
-
-    public:
-        World();
         
         Chunk* getChunk(glm::vec2 pos);
         void addChunk(glm::vec2 pos);
         void removeChunk(glm::vec2 pos);
         void removeChunk(int index);
+
+    public:
+        ChunkManager();
+
         void draw();
-        void test(glm::vec3 pos);
+        void update(glm::vec3 pos);
 };
 
 #endif

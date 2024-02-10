@@ -9,7 +9,7 @@
 #include "opengl/texture.hpp"
 #include "camera.hpp"
 
-#include "world/chunk.hpp"
+#include "world/structure/chunk.hpp"
 #include "world/world.hpp"
 
 #include "settings.hpp"
@@ -76,14 +76,8 @@ int minecraft()
 
     #pragma endregion
 
-    if(!loadChunkSettings("config/chunk.json")) {
-        std::cerr << "Failed to load chunk settings !" << std::endl;
+    if(!loadSetting())
         return -1;
-    }
-    if(!loadWorldSettings("config/world.json")) {
-        std::cerr << "Failed to load world settings !" << std::endl;
-        return -1;
-    }
 
     #pragma region "Importation of shaders and textures, and creation of the world"
 
@@ -151,7 +145,7 @@ int minecraft()
 int main()
 {
     // nullptr = false
-    // /usr/include/GL/glew.h
+    // std::thread threadChunkGeneration(&World::chunkGeneration, &world, &run);
 
     minecraft();
 }

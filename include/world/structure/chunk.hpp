@@ -6,13 +6,15 @@
 #include "opengl/VAO.hpp"
 #include "opengl/VBO.hpp"
 #include "opengl/EBO.hpp"
-#include "opengl/mesh.hpp"
 #include "opengl/shaders.hpp"
 #include "opengl/texture.hpp"
 
-#include "cube.hpp"
-#include "vertex.hpp"
-#include "octree.hpp"
+#include "world/structure/cube.hpp"
+#include "world/structure/mesh.hpp"
+#include "world/structure/octree.hpp"
+
+#include "world/utils/vertex.hpp"
+#include "world/utils/texture_coord_cube.hpp"
 
 #include "settings.hpp"
 
@@ -22,44 +24,6 @@ extern Vertex yp;
 extern Vertex ym;
 extern Vertex zp;
 extern Vertex zm;
-
-struct TextureCoordFace
-{
-    TextureCoordFace() {}
-
-    TextureCoordFace(
-        float ax, float ay,
-        float bx, float by,
-        float cx, float cy,
-        float dx, float dy
-    ) {
-        v[0][0] = ax;
-        v[0][1] = ay;
-        v[1][0] = bx;
-        v[1][1] = by;
-        v[2][0] = cx;
-        v[2][1] = cy;
-        v[3][0] = dx;
-        v[3][1] = dy;
-    }
-
-    float v[4][2];
-};
-
-struct TextureCoordCube
-{
-    TextureCoordCube() {}
-
-    TextureCoordCube(
-        TextureCoordFace ptop,
-        TextureCoordFace pside,
-        TextureCoordFace pbottom
-    ): top(ptop), side(pside), bottom(pbottom) {}
-
-    TextureCoordFace top;
-    TextureCoordFace side;
-    TextureCoordFace bottom;
-};
 
 class Chunk
 {
@@ -71,8 +35,6 @@ class Chunk
         VAO vao;
         VBO vbo;
         EBO ebo;
-
-        std::vector<TextureCoordCube>* textCoord;
 
         Chunk* chunk_xp;
         Chunk* chunk_xm;
@@ -98,7 +60,8 @@ class Chunk
 
         void updateMesh();
 
-        Chunk(glm::vec2 pos, std::vector<TextureCoordCube>* pTextCoord, Chunk* chunk_xp, Chunk* chunk_xm, Chunk* chunk_yp, Chunk* chunk_ym);
+        Chunk();
+        Chunk(glm::vec2 pos, Chunk* chunk_xp, Chunk* chunk_xm, Chunk* chunk_yp, Chunk* chunk_ym);
 
         bool add(Cube cube);
         Cube* get(glm::vec3 pos);
@@ -115,7 +78,7 @@ class Chunk
         bool checkIsFace(int i, Vertex v, glm::vec3 pos);
         bool hasFace(Vertex v, glm::vec3 pos);
 
-        void removeFace(Vertex vertex, Cube* cube);
+        void removeFace(Vertex vertex, glm::vec3 pos);
         void addFace(Vertex v, glm::vec3 pos);
 
         void setChunkXp(Chunk* chunk);
@@ -140,10 +103,6 @@ class Chunk
 
         void addVerticesFace(Vertex v, int x_min, int y_min, int z_min, int x_max, int y_max, int z_max);
         void unload();
-
-        void printMeshPart(int i);
-        void printMesh();
-        void printIndices();
 };
 
 #endif

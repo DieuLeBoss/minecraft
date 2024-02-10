@@ -1,10 +1,10 @@
-#include "world/octree.hpp"
+#include "world/structure/octree.hpp"
 
 using namespace std;
 
 Octree::Octree()
 {
-    root = Node(Zone(0, 0, 0, 16, 256, 16)); // config octree
+    root = Node(Zone(0, 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH)); // config octree
     MAX_SIZE_LIST = 1024; // config octree
     cubes = std::vector<Cube>();
 }

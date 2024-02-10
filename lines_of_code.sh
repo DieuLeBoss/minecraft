@@ -1,1 +1,1 @@
-find src/ include/ -name '*.[ch]pp' | xargs wc -l | tail -l
+find src/ include/ -name '*.[ch]pp' | xargs wc -l | cat 

@@ -2,5 +2,6 @@
     "dimension": {
         "width": 16,
         "height": 256
-    }
+    },
+    "scale": 1
 }

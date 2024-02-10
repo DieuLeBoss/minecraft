@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 
-#include "cube.hpp"
+#include "world/structure/cube.hpp"
+
+#include "settings.hpp"
 
 struct Zone
 {
