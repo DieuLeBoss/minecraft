@@ -57,11 +57,11 @@ void Camera::Inputs(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        speed = 0.1f;
+        speed = run_speed;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
     {
-        speed = 0.05f;
+        speed = default_speed;
     }
 
     double posX, posY;
@@ -88,6 +88,10 @@ void Camera::Inputs(GLFWwindow* window)
 glm::vec3 Camera::getPosition()
 {
     return this->Position;
+}
+
+glm::vec3* Camera::getPointerPosition() {
+    return &Position;
 }
 
 glm::mat4 Camera::getCameraMatrix()

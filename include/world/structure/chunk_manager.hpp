@@ -2,6 +2,8 @@
 #define CHUNK_MANAGER_HPP
 
 #include <vector>
+#include <string>
+#include <thread>
 #include <glm/glm.hpp>
 
 #include "world/structure/chunk.hpp"
@@ -9,7 +11,7 @@
 class ChunkManager
 {
     private:
-        std::vector<Chunk> chunks;
+        std::vector<Chunk*> chunks;
 
         float calculateDist(glm::vec3 pos1, glm::vec3 pos2);
 
@@ -23,6 +25,10 @@ class ChunkManager
 
     public:
         ChunkManager();
+        ChunkManager(glm::vec3* pos_player);
+
+        void generateDefault(glm::vec3* pos_player);
+        void generateSuperFlat(glm::vec3* pos_player);
 
         void draw();
         void update(glm::vec3 pos);

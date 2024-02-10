@@ -1,7 +1,11 @@
 #include "world/structure/chunk_manager.hpp"
 
-ChunkManager::ChunkManager() {
-    chunks = std::vector<Chunk>();
+ChunkManager::ChunkManager() {}
+
+ChunkManager::ChunkManager(glm::vec3* pos_player) {
+    chunks = std::vector<Chunk*>();
+
+    generateSuperFlat(pos_player);
 }
 
 void ChunkManager::addChunk(glm::vec2 pos)
@@ -11,70 +15,72 @@ void ChunkManager::addChunk(glm::vec2 pos)
     Chunk* chunk_yp = getChunk(glm::vec2(pos.x, pos.y+1));
     Chunk* chunk_ym = getChunk(glm::vec2(pos.x, pos.y-1));
 
-    Chunk chunk(pos, chunk_xp, chunk_xm, chunk_yp, chunk_ym);
+    Chunk* chunk = new Chunk(pos, chunk_xp, chunk_xm, chunk_yp, chunk_ym);
 
     chunks.push_back(chunk);
 
     for(int x = 0; x < CHUNK_WIDTH; x++) {
         for(int z = 0; z < CHUNK_WIDTH; z++) {
-            chunk.addOctree(Cube(glm::vec3(x, 0, z), 8));
+            chunk->addOctree(Cube(glm::vec3(x, 0, z), 8));
             for(int y = 1; y < 4; y++) {
-                chunk.addOctree(Cube(glm::vec3(x, y, z), 1));
+                chunk->addOctree(Cube(glm::vec3(x, y, z), 1));
             }
-            chunk.addOctree(Cube(glm::vec3(x, 4, z), 0));
+            chunk->addOctree(Cube(glm::vec3(x, 4, z), 0));
         }
     }
 
-    chunk.updateMesh();
+    chunk->updateMesh();
 
-    chunk.testBorder();  
+    chunk->testBorder();  
 
     // a verifier si != nullptr connard de merde !!!!!!!
 
     if(chunk_xp) {
-        chunk_xp->setChunkXm(&chunk);
+        chunk_xp->setChunkXm(chunk);
         chunk_xp->testBorder();
     }
     
     if(chunk_xm) {
-        chunk_xm->setChunkXp(&chunk);
+        chunk_xm->setChunkXp(chunk);
         chunk_xm->testBorder();
     }
     
     if(chunk_yp) {
-        chunk_yp->setChunkYm(&chunk);
+        chunk_yp->setChunkYm(chunk);
         chunk_yp->testBorder();
     }
 
     if(chunk_ym) {
-        chunk_ym->setChunkYp(&chunk);
+        chunk_ym->setChunkYp(chunk);
         chunk_ym->testBorder();
     }
 }
 
 void ChunkManager::removeChunk(glm::vec2 pos) {
-    Chunk chunk;
+    Chunk* chunk;
     for(int i = 0; i < chunks.size(); i++) {
         chunk = chunks.at(i);
-        if(chunk.getPosition() == pos) {
-            chunk.unload();
+        if(chunk->getPosition() == pos) {
+            chunk->unload();
             chunks.erase(chunks.begin()+i);
+            delete(chunk);
         }
     }
 }
 
 void ChunkManager::removeChunk(int index) {
-    Chunk chunk = chunks.at(index);
-    chunk.unload();
+    Chunk* chunk = chunks.at(index);
+    chunk->unload();
     chunks.erase(chunks.begin()+index);   
+    delete(chunk);
 }
 
 Chunk* ChunkManager::getChunk(glm::vec2 pos) {
-    Chunk chunk;
+    Chunk* chunk;
     for(int i = 0; i < chunks.size(); i++) {
         chunk = chunks.at(i);
-        if(chunk.getPosition() == pos) {
-            return &chunk;
+        if(chunk->getPosition() == pos) {
+            return chunk;
         }
     }
     return nullptr;
@@ -91,40 +97,40 @@ glm::vec3 ChunkManager::getGlobalPosFromCamera(glm::vec2 local_pos, int pos_y_ca
 
 void ChunkManager::draw()
 {
-    for(Chunk c: chunks) {
-        c.draw();
+    for(Chunk* c: chunks) {
+        c->draw();
     }
 }
 
 void ChunkManager::update(glm::vec3 pos) {
-    Chunk chunk;
+    Chunk* chunk;
     glm::vec2 local_pos;
     glm::vec3 global_pos;
 
     for(int i = 0; i < chunks.size(); i++) {
         chunk = chunks.at(i);
-        chunk.testBorder();
+        chunk->testBorder();
 
-        if(chunk.isBorder()) {
-            local_pos = chunk.getPosition();
+        if(chunk->isBorder()) {
+            local_pos = chunk->getPosition();
             global_pos = getGlobalPosFromCamera(local_pos, pos.y);
 
             if(calculateDist(pos, global_pos) > RENDER_DISTANCE*CHUNK_WIDTH) {
                 removeChunk(i);
             } else {
-                if(!chunk.getChunkXp() && calculateDist(glm::vec3(global_pos.x+CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
+                if(!chunk->getChunkXp() && calculateDist(glm::vec3(global_pos.x+CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
                     addChunk(glm::vec2(local_pos.x+1, local_pos.y));
 
-                if(!chunk.getChunkXm() && calculateDist(glm::vec3(global_pos.x-CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
+                if(!chunk->getChunkXm() && calculateDist(glm::vec3(global_pos.x-CHUNK_WIDTH, global_pos.y, global_pos.z), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
                     addChunk(glm::vec2(local_pos.x-1, local_pos.y));
 
-                if(!chunk.getChunkYp() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z+CHUNK_WIDTH), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
+                if(!chunk->getChunkYp() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z+CHUNK_WIDTH), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
                     addChunk(glm::vec2(local_pos.x, local_pos.y+1));
 
-                if(!chunk.getChunkYm() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z-CHUNK_WIDTH), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
+                if(!chunk->getChunkYm() && calculateDist(glm::vec3(global_pos.x, global_pos.y, global_pos.z-CHUNK_WIDTH), pos) < RENDER_DISTANCE*(CHUNK_WIDTH-1))
                     addChunk(glm::vec2(local_pos.x, local_pos.y-1));
 
-                chunk.testBorder();
+                chunk->testBorder();
             }
         }                
     }
@@ -132,4 +138,8 @@ void ChunkManager::update(glm::vec3 pos) {
 
 float ChunkManager::calculateDist(glm::vec3 pos1, glm::vec3 pos2) {
     return sqrt(pow(pos1.x-pos2.x, 2)+pow(pos1.y-pos2.y, 2)+pow(pos1.z-pos2.z, 2));
+}
+
+void ChunkManager::generateSuperFlat(glm::vec3* pos_player) {
+    addChunk(glm::vec2(int(pos_player->x/CHUNK_WIDTH), int(pos_player->z/CHUNK_WIDTH)));
 }

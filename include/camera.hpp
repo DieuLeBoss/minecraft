@@ -26,6 +26,9 @@ class Camera
         int width;
         int height;
 
+        float default_speed = 0.05f;
+        float run_speed = 0.1f;
+
         float speed = 0.05f;
         float sensitivity = 100.0f;
 
@@ -37,6 +40,7 @@ class Camera
         void Matrix(Shader shader, const char* uniform);
         void Inputs(GLFWwindow* window);
         glm::vec3 getPosition();
+        glm::vec3* getPointerPosition();
 
         glm::mat4 getCameraMatrix();
 };

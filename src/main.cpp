@@ -83,15 +83,11 @@ int minecraft()
 
     Shader shader("res/shaders/defaultV.glsl", "res/shaders/defaultF.glsl");
 
-    World world = World();
+    glm::vec3 player_pos(0.0f, 10.0f, 0.0f);
 
-    for(int x = 0; x < 3; x++) {
-        for(int z = 0; z < 3; z++) {
-            world.addChunk(glm::vec2(x, z));
-        }
-    }
+    Camera camera(WIDTH, HEIGHT, player_pos, window);
 
-    world.getChunk(glm::vec2(0, 0))->remove(glm::vec3(5, 5, 5));
+    World world = World(camera.getPointerPosition());
 
     Texture tex("res/textures/terrain.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     tex.textUnit(shader, "tex0", 0);
@@ -100,8 +96,6 @@ int minecraft()
     glEnable(GL_CULL_FACE); // permet d'activer le culling (affiche les triangles que dans une certaine orientation)
 
     #pragma endregion
-
-    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f), window);
 
 
     while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -120,7 +114,7 @@ int minecraft()
 
         tex.Bind();
         
-        world.test(camera.getPosition());
+        world.update(camera.getPosition());
 
         world.draw();
 
