@@ -1,0 +1,15 @@
+{
+    "water level": 64,
+
+    "min terrain level": 48,
+
+    "procedural": {
+        "land biome": { 
+            "octaves": 2,
+            "frequency": 0.0054,
+            "amplitude": 128,
+            "persistence": 0.1,
+            "mult frequency": 10
+        }
+    }
+}

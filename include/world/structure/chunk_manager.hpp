@@ -6,12 +6,16 @@
 #include <thread>
 #include <glm/glm.hpp>
 
+#include "camera.hpp"
 #include "world/structure/chunk.hpp"
+#include "world/generation/procedural_generation.hpp"
 
 class ChunkManager
 {
     private:
         std::vector<Chunk*> chunks;
+
+        ProceduralGeneration procedural_generator;
 
         float calculateDist(glm::vec3 pos1, glm::vec3 pos2);
 
@@ -32,6 +36,7 @@ class ChunkManager
 
         void draw();
         void update(glm::vec3 pos);
+        void threadUpdate(Camera* camera);
 };
 
 #endif

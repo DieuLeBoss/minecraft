@@ -4,7 +4,7 @@ using namespace std;
 
 Octree::Octree()
 {
-    root = Node(Zone(0, 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH)); // config octree
+    root = Node(Zone(0, 0, 0, CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH));
     MAX_SIZE_LIST = 1024; // config octree
     cubes = std::vector<Cube>();
 }

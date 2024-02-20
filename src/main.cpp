@@ -16,6 +16,9 @@
 
 #include "nlohmann/json.hpp"
 
+#include <cmath>
+#include "world/generation/perlin_noise_2d.hpp"
+
 bool checkChunk(glm::mat4 matrix, glm::vec3 pos) {
     glm::vec4 clipSpace = matrix * glm::vec4(pos, 1);
 
@@ -83,12 +86,6 @@ int minecraft()
 
     Shader shader("res/shaders/defaultV.glsl", "res/shaders/defaultF.glsl");
 
-    glm::vec3 player_pos(0.0f, 10.0f, 0.0f);
-
-    Camera camera(WIDTH, HEIGHT, player_pos, window);
-
-    World world = World(camera.getPointerPosition());
-
     Texture tex("res/textures/terrain.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     tex.textUnit(shader, "tex0", 0);
 
@@ -96,6 +93,13 @@ int minecraft()
     glEnable(GL_CULL_FACE); // permet d'activer le culling (affiche les triangles que dans une certaine orientation)
 
     #pragma endregion
+
+
+    glm::vec3 player_pos(0.0f, 256.0f, 0.0f);
+
+    Camera camera(WIDTH, HEIGHT, player_pos, window);
+
+    World world = World(camera.getPointerPosition());
 
 
     while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -106,7 +110,7 @@ int minecraft()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         camera.Inputs(window);
-        camera.updateMatrix(45.0f, 0.1f, 10000.0f);
+        camera.updateMatrix(90.0f, 0.1f, 10000.0f);
 
         shader.use();
 
@@ -136,10 +140,51 @@ int minecraft()
     return 0;
 }
 
+void test() {
+    loadSetting();
+
+    PerlinNoise2D test;
+
+    int total;
+
+    float frequency = PROCEDURAL_FREQUENCY;
+    float amplitude = PROCEDURAL_AMPLITUDE;
+
+    // for(int y = 0; y < 10; y++) {
+    //     for(int x = 0; x < 10; x++) {
+    //         total = 0;
+
+    //         for(int o = 0; o < PROCEDURAL_OCTAVES; o++) {
+    //             total += test.noise_2d(x*frequency, y*frequency)*amplitude;
+
+    //             amplitude*=PROCEDURAL_PERSISTENCE;
+    //             frequency*=PROCEDURAL_MULT_FREQUENCY;
+    //         }
+
+    //         std::cout << total << ", ";
+    //     }
+
+    //     std::cout << "\n";
+    // }
+
+    for(int y = 0; y < 10; y++) {
+        for(int x = 0; x < 10; x++) {
+            std::cout << test.noise_2d(x*frequency, y*frequency) << ", ";
+        }
+
+        std::cout << "\n";
+    }
+}
+
 int main()
 {
     // nullptr = false
     // std::thread threadChunkGeneration(&World::chunkGeneration, &world, &run);
 
     minecraft();
+
+
+    // test();
+
+    return 0;
 }

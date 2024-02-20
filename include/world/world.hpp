@@ -4,6 +4,7 @@
 #include <thread>
 #include <glm/glm.hpp>
 
+#include "camera.hpp"
 #include "world/structure/chunk_manager.hpp"
 
 #include "settings.hpp"

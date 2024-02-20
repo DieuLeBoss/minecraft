@@ -10,6 +10,17 @@ int CHUNK_SCALE = 0;
 
 int RENDER_DISTANCE = 0;
 
+int SEED = 0;
+
+int WATER_LEVEL = 0;
+int MIN_TERRAIN_LEVEL = 0;
+
+int PROCEDURAL_OCTAVES = 0;
+float PROCEDURAL_FREQUENCY = 0;
+float PROCEDURAL_AMPLITUDE = 0;
+float PROCEDURAL_PERSISTENCE = 0;
+float PROCEDURAL_MULT_FREQUENCY = 0;
+
 std::vector<TextureCoordCube> TEXTURE_COORD = std::vector<TextureCoordCube>();
 
 
@@ -35,6 +46,49 @@ bool loadChunkSettings(const std::string& path) {
 }
 
 bool loadWorldSettings(const std::string& path) {
+    std::ifstream file(path);
+
+    if(!file.is_open())
+        return false;
+    
+    json data;
+    file >> data;
+
+    file.close();
+
+    SEED = data["seed"];
+
+    return true;
+}
+
+bool loadGenerationSetting(const std::string& path) {
+    std::ifstream file(path);
+
+    if(!file.is_open())
+        return false;
+    
+    json data;
+    file >> data;
+
+    file.close();
+
+    WATER_LEVEL = data["water level"];
+    MIN_TERRAIN_LEVEL = data["min terrain level"];
+
+    auto procedural = data["procedural"];
+
+    auto land = procedural["land biome"];
+    
+    PROCEDURAL_OCTAVES = land["octaves"];
+    PROCEDURAL_FREQUENCY = land["frequency"];
+    PROCEDURAL_AMPLITUDE = land["amplitude"];
+    PROCEDURAL_PERSISTENCE = land["persistence"];
+    PROCEDURAL_MULT_FREQUENCY = land["mult frequency"];
+
+    return true;
+}
+
+bool loadPlayerSettings(const std::string& path) {
     std::ifstream file(path);
 
     if(!file.is_open())
@@ -121,12 +175,20 @@ bool loadSetting() {
         std::cerr << "Failed to load chunk settings !" << std::endl;
         return false;
     }
+    if(!loadPlayerSettings("config/player.json")) {
+        std::cerr << "Failed to load player settings !" << std::endl;
+        return false;
+    }
     if(!loadWorldSettings("config/world.json")) {
         std::cerr << "Failed to load world settings !" << std::endl;
         return false;
     }
     if(!loadTextureCoord("config/cube.json")) {
         std::cerr << "Failed to load texture coord settings !" << std::endl;
+        return false;
+    }
+    if(!loadGenerationSetting("config/generation.json")) {
+        std::cerr << "Failed to load generation settings !" << std::endl;
         return false;
     }
     return true;

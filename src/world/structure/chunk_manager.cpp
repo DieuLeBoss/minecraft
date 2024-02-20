@@ -5,6 +5,8 @@ ChunkManager::ChunkManager() {}
 ChunkManager::ChunkManager(glm::vec3* pos_player) {
     chunks = std::vector<Chunk*>();
 
+    procedural_generator = ProceduralGeneration();
+
     generateSuperFlat(pos_player);
 }
 
@@ -19,15 +21,17 @@ void ChunkManager::addChunk(glm::vec2 pos)
 
     chunks.push_back(chunk);
 
-    for(int x = 0; x < CHUNK_WIDTH; x++) {
-        for(int z = 0; z < CHUNK_WIDTH; z++) {
-            chunk->addOctree(Cube(glm::vec3(x, 0, z), 8));
-            for(int y = 1; y < 4; y++) {
-                chunk->addOctree(Cube(glm::vec3(x, y, z), 1));
-            }
-            chunk->addOctree(Cube(glm::vec3(x, 4, z), 0));
-        }
-    }
+    // for(int x = 0; x < CHUNK_WIDTH; x++) {
+    //     for(int z = 0; z < CHUNK_WIDTH; z++) {
+    //         chunk->addOctree(Cube(glm::vec3(x, 0, z), 8));
+    //         for(int y = 1; y < 4; y++) {
+    //             chunk->addOctree(Cube(glm::vec3(x, y, z), 1));
+    //         }
+    //         chunk->addOctree(Cube(glm::vec3(x, 4, z), 0));
+    //     }
+    // }
+
+    procedural_generator.generateChunk(chunk);
 
     chunk->updateMesh();
 
