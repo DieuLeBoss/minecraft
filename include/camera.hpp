@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <mutex>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -22,7 +23,6 @@ class Camera
         
         glm::quat OrientationQuat = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
-
         int width;
         int height;
 
@@ -33,7 +33,7 @@ class Camera
         float sensitivity = 100.0f;
 
     public:
-
+        Camera();
         Camera(int width, int height, glm::vec3 position, GLFWwindow* window);
 
         void updateMatrix(float FOVdeg, float nearPlane, float farPlane);

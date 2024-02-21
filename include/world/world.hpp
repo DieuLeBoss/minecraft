@@ -15,6 +15,7 @@ class World
         ChunkManager terrain;
 
     public:
+        World();
         World(glm::vec3* pos_player);
 
         void generateTerrain();

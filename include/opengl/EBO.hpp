@@ -10,6 +10,7 @@ class EBO
         EBO();
         EBO(GLuint* indices, GLsizeiptr size);
 
+        void generate();
         void Bind();
         void Unbind();
         void Delete();

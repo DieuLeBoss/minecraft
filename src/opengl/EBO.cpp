@@ -1,10 +1,6 @@
 #include "opengl/EBO.hpp"
 
-EBO::EBO()
-{
-    glGenBuffers(1, &ID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
-}
+EBO::EBO() {}
 
 EBO::EBO(GLuint* indices, GLsizeiptr size)
 {
@@ -32,4 +28,10 @@ void EBO::update(GLuint* indices, GLsizeiptr size)
 {
     Bind();
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+}
+
+void EBO::generate()
+{
+    glGenBuffers(1, &ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 }

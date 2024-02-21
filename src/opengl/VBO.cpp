@@ -1,10 +1,6 @@
 #include "opengl/VBO.hpp"
 
-VBO::VBO()
-{
-    glGenBuffers(1, &ID);
-    glBindBuffer(GL_ARRAY_BUFFER, ID);
-}
+VBO::VBO() {}
 
 VBO::VBO(GLfloat* vertices, GLsizeiptr size)
 {
@@ -32,4 +28,10 @@ void VBO::update(GLfloat* vertices, GLsizeiptr size)
 {
     Bind();
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+}
+
+void VBO::generate()
+{
+    glGenBuffers(1, &ID);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
 }

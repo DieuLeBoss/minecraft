@@ -2,6 +2,8 @@
 
 using namespace nlohmann;
 
+World::World() {}
+
 World::World(glm::vec3* pos_player)
 {
     terrain = ChunkManager(pos_player);

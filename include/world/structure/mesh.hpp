@@ -1,6 +1,7 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
+#include <mutex>
 #include <vector>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
@@ -17,8 +18,17 @@ class Mesh
         std::vector<GLfloat> vertices;
         std::vector<GLuint> indices;
 
+        std::mutex mutex;
+
+        bool is_modified;
+
+        bool checkIsFaceP(int i, Vertex v, glm::vec3 pos);
+
+        void updateIndicesP(int i);
+
     public:
         Mesh();
+        Mesh& operator=(const Mesh& other);
 
         void addVertices(glm::vec3 pos, Vertex v, TextureCoordFace t);
         void removeVertices(int i);
@@ -35,6 +45,9 @@ class Mesh
 
         unsigned long getVerticesSize();
         unsigned long getIndicesSize();
+
+        bool needBufferUpdate();
+        void bufferUpdate();
 };
 
 #endif

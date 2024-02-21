@@ -32,12 +32,12 @@ Multithread :
 
     1. Thread principal (Main Thread) :
         . Gestion de l'interface utilisateur (GUI).
-        . Gestion des entrées utilisateur (mouvement, actions, etc.).
         . Synchronisation des différents threads.
 
     2. Thread de rendu (Rendering Thread) :
-        . Gère le rendu graphique du jeu en utilisant OpenGL.
+        . Gère le rendu graphique du jeu en utilisant OpenGL et GLFW.
         . Calcul des transformations, des shaders, et envoie les commandes de rendu à la carte graphique.
+        . Gestion des entrées utilisateur (mouvement, actions, etc.).
 
     3. Thread de mise à jour du monde (World Update Thread) :
         . Gère la simulation du monde du jeu (génération de terrain, physique, etc.).
@@ -49,3 +49,14 @@ Multithread :
     5. Thread audio (Audio Thread) :
         . Gère la lecture des effets sonores et de la musique en arrière-plan.
 
+
+
+A save :
+
+bool checkChunk(glm::mat4 matrix, glm::vec3 pos) {
+    glm::vec4 clipSpace = matrix * glm::vec4(pos, 1);
+
+    return (clipSpace.x >= -1 && clipSpace.x <= 1 &&
+            clipSpace.y >= -1 && clipSpace.y <= 1 &&
+            clipSpace.z >= -1 && clipSpace.z <= 1);
+}

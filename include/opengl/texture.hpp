@@ -14,6 +14,7 @@ class Texture
         GLuint ID;
         GLenum type; 
         int NB;
+        Texture();
         Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
 
         void textUnit(Shader shader, const char* uniform, GLuint unit);

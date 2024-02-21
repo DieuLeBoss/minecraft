@@ -16,20 +16,12 @@ Chunk::Chunk(glm::vec2 ppos, Chunk* chunk_xp, Chunk* chunk_xm, Chunk* chunk_yp, 
     octree = Octree();
     mesh = Mesh();
 
-    vao = VAO();
-    vbo = VBO();
-    ebo = EBO();
-
-    vao.LinkVBO(&vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-    vao.LinkVBO(&vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    vao.Unbind();
-
     this->chunk_xp = chunk_xp;
     this->chunk_xm = chunk_xm;
     this->chunk_yp = chunk_yp;
     this->chunk_ym = chunk_ym;
 
+    bufferGenerated = false;
 }
 
 #pragma region "Utils"
@@ -62,11 +54,19 @@ void Chunk::updateBuffer()
     vao.Unbind();
     vbo.Unbind();
     ebo.Unbind();
+
+    mesh.bufferUpdate();
 }
 
 
 void Chunk::draw()
 {
+    if(!bufferGenerated)
+        generateBuffer();
+
+    if(mesh.needBufferUpdate())
+        updateBuffer();
+
     vao.Bind();
 
     glDrawElements(GL_TRIANGLES, mesh.getIndicesSize(), GL_UNSIGNED_INT, 0);
@@ -175,7 +175,6 @@ void Chunk::addVerticesFace(Vertex v, int x_min, int y_min, int z_min, int x_max
             }
         }
     }
-    updateBuffer();
 }
 
 
@@ -218,25 +217,20 @@ Cube Chunk::remove(glm::vec3 pos)
     
     if(chunk_xp && pos.x == CHUNK_WIDTH-1) {
         chunk_xp->addFace(xm, glm::vec3(0, pos.y, pos.z));
-        chunk_xp->updateBuffer();
     }
     
     if(chunk_xm && pos.x == 0) {
         chunk_xm->addFace(xp, glm::vec3(CHUNK_WIDTH-1, pos.y, pos.z));
-        chunk_xm->updateBuffer();
     }
 
     if(chunk_yp && pos.z == CHUNK_WIDTH-1) {
         chunk_yp->addFace(zm, glm::vec3(pos.x, pos.y, 0));
-        chunk_yp->updateBuffer();
     }
 
     if(chunk_ym && pos.z == 0) {
         chunk_ym->addFace(zp, glm::vec3(pos.x, pos.y, CHUNK_WIDTH-1));
-        chunk_ym->updateBuffer();
     }
 
-    updateBuffer();
     
     return temp;
 }
@@ -434,7 +428,6 @@ bool Chunk::add(Cube cube)
         chunk_yp->removeFace(zm, zpC_neighbor->pos);
     }
     
-    updateBuffer();
 
     return true;
 }
@@ -445,7 +438,6 @@ void Chunk::removeFace(Vertex vertex, glm::vec3 pos) {
     for(int i = 0; i < mesh.getVerticesSize(); i+=20) {
         if(mesh.checkIsFace(i, vertex, getWorldCoord(pos))) {
             mesh.removeVertices(i);
-            updateBuffer();
             break;
         }
     }
@@ -463,8 +455,6 @@ void Chunk::updateMesh()
     mesh.clear();
 
     updateMesh(octree.getRoot());
-
-    updateBuffer();
 }
 
 
@@ -541,4 +531,17 @@ void Chunk::updateMesh(Node* node)
 
         
     }
+}
+
+void Chunk::generateBuffer() {
+    vao.generate();
+    vbo.generate();
+    ebo.generate();
+
+    vao.LinkVBO(&vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+    vao.LinkVBO(&vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    vao.Unbind();
+
+    bufferGenerated = true;
 }

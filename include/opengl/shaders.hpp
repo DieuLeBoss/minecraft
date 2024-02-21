@@ -9,6 +9,7 @@
 class Shader
 {
     public:
+        Shader();
         Shader(const char* vPath, const char* fPath);
 
         void setInt(const std::string &name, float value);

@@ -1,10 +1,6 @@
 #include "opengl/VAO.hpp"
 
-VAO::VAO()
-{
-    glGenVertexArrays(1, &ID);
-    Bind();
-}
+VAO::VAO() {}
 
 void VAO::LinkVBO(VBO* VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)
 {
@@ -29,4 +25,9 @@ void VAO::Unbind()
 void VAO::Delete()
 {
     glDeleteVertexArrays(1, &ID);
+}
+
+void VAO::generate() {
+    glGenVertexArrays(1, &ID);
+    Bind();
 }

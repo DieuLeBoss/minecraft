@@ -45,6 +45,8 @@ class Chunk
 
         bool border;
 
+        bool bufferGenerated;
+
         void addVertices(glm::vec3 pos, Vertex v, TextureCoordFace t);
         void addNeighborFace(Cube* neighbor, Vertex vertex, TextureCoordFace t);
 
@@ -55,6 +57,8 @@ class Chunk
 
         void updateMesh(Node* node);
         void updateBuffer();
+
+        void generateBuffer();
 
     public:
 

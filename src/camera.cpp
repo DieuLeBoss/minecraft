@@ -1,9 +1,11 @@
 #include "camera.hpp"
 
+Camera::Camera() {}
+
 Camera::Camera(int width, int height, glm::vec3 position, GLFWwindow* window)
 {
-    Camera::width = width;
-    Camera::height = height;
+    this->width = width;
+    this->height = height;
     Position = position;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -19,7 +21,6 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
     //projection = glm::perspective(glm::radians(FOVdeg), (float)(width / height), nearPlane, farPlane);
 
     projection = glm::perspective(glm::radians(FOVdeg), static_cast<float>(width) / static_cast<float>(height), nearPlane, farPlane);
-
 
     cameraMatrix = projection * view;
 }

@@ -1,5 +1,7 @@
 #include "opengl/shaders.hpp"
 
+Shader::Shader() {}
+
 Shader::Shader(const char* vPath, const char* fPath)
 {
     // Create the shaders

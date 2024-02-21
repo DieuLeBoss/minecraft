@@ -3,6 +3,8 @@
 
 #include "opengl/texture.hpp"
 
+Texture::Texture() {}
+
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
     type = texType;
