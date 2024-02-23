@@ -106,7 +106,7 @@ void ChunkManager::draw()
     }
 }
 
-void ChunkManager::update(glm::vec3 pos) {
+void ChunkManager::updateRound(glm::vec3 pos) {
     Chunk* chunk;
     glm::vec2 local_pos;
     glm::vec3 global_pos;
@@ -138,6 +138,53 @@ void ChunkManager::update(glm::vec3 pos) {
             }
         }                
     }
+}
+
+void ChunkManager::updateSquare(glm::vec3 pos) {
+    Chunk* chunk;
+    glm::vec2 local_pos;
+    glm::vec3 global_pos;
+
+    glm::vec2 local_chunk_player_pos(static_cast<int>(pos.x/CHUNK_WIDTH), static_cast<int>(pos.z/CHUNK_WIDTH));
+
+    int x_min = local_chunk_player_pos.x - RENDER_DISTANCE;
+    int x_max = local_chunk_player_pos.x + RENDER_DISTANCE;
+    int z_min = local_chunk_player_pos.y - RENDER_DISTANCE;
+    int z_max = local_chunk_player_pos.y + RENDER_DISTANCE;
+
+
+
+    for(int i = 0; i < chunks.size(); i++) {
+        chunk = chunks.at(i);
+        chunk->testBorder();
+
+        if(chunk->isBorder()) {
+            local_pos = chunk->getPosition();
+            global_pos = getGlobalPosFromCamera(local_pos, pos.y);
+
+            if(!isIn(x_min, x_max, z_min, z_max, local_pos)) {
+                removeChunk(i);
+            } else {
+                if(!chunk->getChunkXp() && isIn(x_min, x_max, z_min, z_max, glm::vec2(local_pos.x+1, local_pos.y)))
+                    addChunk(glm::vec2(local_pos.x+1, local_pos.y));
+
+                if(!chunk->getChunkXm() && isIn(x_min, x_max, z_min, z_max, glm::vec2(local_pos.x-1, local_pos.y)))
+                    addChunk(glm::vec2(local_pos.x-1, local_pos.y));
+
+                if(!chunk->getChunkYp() && isIn(x_min, x_max, z_min, z_max, glm::vec2(local_pos.x, local_pos.y+1)))
+                    addChunk(glm::vec2(local_pos.x, local_pos.y+1));
+
+                if(!chunk->getChunkYm() && isIn(x_min, x_max, z_min, z_max, glm::vec2(local_pos.x, local_pos.y-1)))
+                    addChunk(glm::vec2(local_pos.x, local_pos.y-1));
+
+                chunk->testBorder();
+            }
+        }                
+    }
+}
+
+bool ChunkManager::isIn(int x_min, int x_max, int z_min, int z_max, glm::vec2 chunk_pos) {
+    return (chunk_pos.x >= x_min && chunk_pos.x <= x_max && chunk_pos.y >= z_min && chunk_pos.y <= z_max);
 }
 
 float ChunkManager::calculateDist(glm::vec3 pos1, glm::vec3 pos2) {

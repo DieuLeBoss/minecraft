@@ -27,6 +27,8 @@ class ChunkManager
         void removeChunk(glm::vec2 pos);
         void removeChunk(int index);
 
+        bool isIn(int x_min, int x_max, int z_min, int z_max, glm::vec2 chunk_pos);
+
     public:
         ChunkManager();
         ChunkManager(glm::vec3* pos_player);
@@ -35,8 +37,8 @@ class ChunkManager
         void generateSuperFlat(glm::vec3* pos_player);
 
         void draw();
-        void update(glm::vec3 pos);
-        void threadUpdate(Camera* camera);
+        void updateRound(glm::vec3 pos);
+        void updateSquare(glm::vec3 pos);
 };
 
 #endif

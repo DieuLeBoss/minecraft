@@ -60,3 +60,6 @@ bool checkChunk(glm::mat4 matrix, glm::vec3 pos) {
             clipSpace.y >= -1 && clipSpace.y <= 1 &&
             clipSpace.z >= -1 && clipSpace.z <= 1);
 }
+
+Bug camera :
+    en gros au lieu de verif par rapport a l'angle, il faut que tu verif par rapport au vecteur front ou Up chakal

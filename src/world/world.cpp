@@ -10,7 +10,7 @@ World::World(glm::vec3* pos_player)
 }
 
 void World::update(glm::vec3 pos) {
-    terrain.update(pos);
+    terrain.updateSquare(pos);
 }
 
 void World::draw() {

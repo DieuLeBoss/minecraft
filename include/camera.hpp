@@ -1,7 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <mutex>
+#include <iostream>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -18,7 +19,8 @@ class Camera
         glm::vec3 Position;
         glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-        glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+        glm::vec3 right;
+        glm::vec3 front;
         glm::mat4 cameraMatrix = glm::mat4(1.0f);
         
         glm::quat OrientationQuat = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);

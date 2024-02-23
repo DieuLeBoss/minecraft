@@ -8,7 +8,7 @@
             "octaves": 2,
             "frequency": 0.0054,
             "amplitude": 128,
-            "persistence": 0.09,
+            "persistence": 0.1,
             "mult frequency": 12
         }
     }

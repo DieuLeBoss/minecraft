@@ -25,7 +25,7 @@ void ProceduralGeneration::generateChunk(Chunk* chunk) {
             //     chunk->addOctree(Cube(glm::vec3(x, y, z), 2));
             // }
 
-            // for(int y = height-3; y < MIN_TERRAIN_LEVEL+height; y++) {
+            // for(int y = MIN_TERRAIN_LEVEL+height-3; y < MIN_TERRAIN_LEVEL+height; y++) {
             //     chunk->addOctree(Cube(glm::vec3(x, y, z), 1));
             // }
 

@@ -31,22 +31,25 @@ void Camera::Matrix(Shader shader, const char* uniform)
 }
 
 void Camera::Inputs(GLFWwindow* window)
-{
+{   
+    right = glm::normalize(glm::cross(Orientation, Up));
+    front = glm::normalize(glm::cross(Up, right));
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        Position += speed * Orientation;
+        Position += speed * front;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        Position += speed * -Orientation;
+        Position += speed * -front;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        Position += speed * glm::normalize(glm::cross(Orientation, Up));
+        Position += speed * right;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+        Position += speed * -right;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
@@ -74,12 +77,10 @@ void Camera::Inputs(GLFWwindow* window)
 
     glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 
-    /*if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-    {
-        Orientation = newOrientation;
-    }*/
+    float tmp = glm::angle(newOrientation, Up);
 
-    Orientation = newOrientation; // a enlever si decomenter dessus !
+    if (tmp < glm::radians(170.0f) && tmp > glm::radians(10.0f)) // ça reste temporaire et ne résoud pas le probleme voir strat.txt pour le reste
+        Orientation = newOrientation;
 
     Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
